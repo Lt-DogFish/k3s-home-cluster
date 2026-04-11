@@ -1,0 +1,18 @@
+# 1. THE NAMESPACE
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloudflare-tunnel
+
+---
+
+# 2. THE SECRET
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tunnel-credentials
+  namespace: cloudflare-tunnel
+type: Opaque
+data:
+  # This is the base64 encoded version of the JSON string you provided
+  credentials.json: eyJBY2NvdW50VGFnIjoiMWZhMTQ0NWVlNDRkNzA3OTBjYTVhYTM1OTE4Zjk2ODUiLCJUdW5uZWxTZWNyZXQiOiI3MFFIcFZWa1JKRkY4WFY0bzA2bXk2WnYrNDhMVFNMZGUzNkc3dldkcmJVPSIsIlR1bm5lbElEIjoiYTU2ODNhYTgtZWQ4Ny00ODBkLTk0N2YtZTc3YmNjZTY0YTNjIiwiRW5kcG9pbnQiOiIifQ==

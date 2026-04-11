@@ -1,0 +1,144 @@
+# 1. TUNNEL ROUTING CONFIG
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflared-config
+  namespace: cloudflare-tunnel
+data:
+  config.yaml: |
+    tunnel: a5683aa8-ed87-480d-947f-e77bcce64a3c
+    credentials-file: /etc/cloudflared/creds/credentials.json
+    ingress:
+      - hostname: test.rajvijeyaram.site
+        service: http://traefik.kube-system.svc.cluster.local:80
+      - service: http_status:404
+
+---
+
+# 2. THE TUNNEL AGENT
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflared
+  namespace: cloudflare-tunnel
+spec:
+  selector:
+    matchLabels:
+      app: cloudflared
+  template:
+    metadata:
+      labels:
+        app: cloudflared
+    spec:
+      containers:
+      - name: cloudflared
+        image: cloudflare/cloudflared:latest
+        args: ["tunnel", "--config", "/etc/cloudflared/config/config.yaml", "run"]
+        volumeMounts:
+        - name: config
+          mountPath: /etc/cloudflared/config
+          readOnly: true
+        - name: creds
+          mountPath: /etc/cloudflared/creds
+          readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          name: cloudflared-config
+      - name: creds
+        secret:
+          secretName: tunnel-credentials
+
+---
+
+# 3. SITE-1 HTML CONTENT
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: site-1-html
+  namespace: cloudflare-tunnel
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>K3s + Cloudflare Tunnel</title>
+        <style>
+            body { background: #1a1a2e; color: #e94560; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+            .card { border: 2px solid #16213e; padding: 3rem; border-radius: 15px; background: #0f3460; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
+            h1 { margin-bottom: 0.5rem; }
+            p { color: #95adb6; }
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <h1>🚀 Connection Successful</h1>
+            <p><strong>Site-1</strong> is now live behind Cloudflare Tunnel.</p>
+            <p style="font-size: 0.8rem; opacity: 0.6;">Host: test.rajvijeyaram.site</p>
+        </div>
+    </body>
+    </html>
+
+---
+
+# 4. SITE-1 APP & SERVICE
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: site-1
+  namespace: cloudflare-tunnel
+spec:
+  selector:
+    matchLabels:
+      app: site-1
+  template:
+    metadata:
+      labels:
+        app: site-1
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html
+        configMap:
+          name: site-1-html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: site-1-service
+  namespace: cloudflare-tunnel
+spec:
+  selector:
+    app: site-1
+  ports:
+  - port: 80
+    targetPort: 80
+
+---
+
+# 5. THE TRAEFIK INGRESS
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: site-1-ingress
+  namespace: cloudflare-tunnel
+
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: test.rajvijeyaram.site
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: site-1-service
+            port:
+              number: 80
