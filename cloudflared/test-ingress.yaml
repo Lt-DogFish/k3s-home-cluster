@@ -1,8 +1,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: podinfo-ingress
-  namespace: test-app
+  name: rajvijeyaram-ingress
+  namespace: rajvijeyaram
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web
 spec:
@@ -15,5 +15,15 @@ spec:
         backend:
           service:
             name: podinfo-service
+            port:
+              number: 80
+  - host: portfolio.rajvijeyaram.site
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: portfolio-service
             port:
               number: 80
