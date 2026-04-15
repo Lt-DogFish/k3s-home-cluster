@@ -7,16 +7,6 @@ metadata:
     traefik.ingress.kubernetes.io/router.entrypoints: web
 spec:
   rules:
-  - host: test.rajvijeyaram.site
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: podinfo-service
-            port:
-              number: 80
   - host: portfolio.rajvijeyaram.site
     http:
       paths:

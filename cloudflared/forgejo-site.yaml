@@ -28,6 +28,10 @@ spec:
       labels:
         app: forgejo
     spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z postgres-service 5432; do sleep 2; done;']
       containers:
         - name: forgejo
           image: codeberg.org/forgejo/forgejo:7
@@ -42,11 +46,23 @@ spec:
             - name: USER_GID
               value: "1000"
             - name: FORGEJO__database__DB_TYPE
-              value: sqlite3
+              value: postgres
+            - name: FORGEJO__database__HOST
+              value: postgres-service:5432
+            - name: FORGEJO__database__NAME
+              value: forgejo
+            - name: FORGEJO__database__USER
+              value: forgejo
+            - name: FORGEJO__database__PASSWD
+              value: strongpassword
+            - name: FORGEJO__database__SSL_MODE
+              value: disable
+            - name: FORGEJO__database__SCHEMA
+              value: public
             - name: FORGEJO__server__DOMAIN
               value: "forgejo.rajvijeyaram.site"
             - name: FORGEJO__server__ROOT_URL
-              value: "https://forgejo.rajvijeyaram.site/" # Ensure this matches your Ingress
+              value: "https://forgejo.rajvijeyaram.site/"
             - name: FORGEJO__server__HTTP_ADDR
               value: "0.0.0.0" # Must listen on all interfaces, not just 127.0.0.1
             - name: FORGEJO__server__HTTP_PORT
