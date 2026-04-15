@@ -1,0 +1,82 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: forgejo-data
+  namespace: rajvijeyaram
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: forgejo
+  namespace: rajvijeyaram
+  labels:
+    app: forgejo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: forgejo
+  template:
+    metadata:
+      labels:
+        app: forgejo
+    spec:
+      containers:
+        - name: forgejo
+          image: codeberg.org/forgejo/forgejo:7
+          ports:
+            - containerPort: 3000
+              name: http-gui
+            - containerPort: 2222
+              name: ssh
+          env:
+            - name: USER_UID
+              value: "1000"
+            - name: USER_GID
+              value: "1000"
+            - name: FORGEJO__database__DB_TYPE
+              value: sqlite3
+            - name: FORGEJO__server__DOMAIN
+              value: "forgejo.rajvijeyaram.site"
+            - name: FORGEJO__server__ROOT_URL
+              value: "https://forgejo.rajvijeyaram.site/" # Ensure this matches your Ingress
+            - name: FORGEJO__server__HTTP_ADDR
+              value: "0.0.0.0" # Must listen on all interfaces, not just 127.0.0.1
+            - name: FORGEJO__server__HTTP_PORT
+              value: "3000"
+            - name: FORGEJO__server__SSH_PORT
+              value: "2222"
+            - name: FORGEJO__server__SSH_LISTEN_PORT
+              value: "2222"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: forgejo-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: forgejo-service
+  namespace: rajvijeyaram
+spec:
+  selector:
+    app: forgejo
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+    - name: ssh
+      protocol: TCP
+      port: 2222
+      targetPort: 2222
