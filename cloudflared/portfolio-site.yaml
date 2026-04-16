@@ -15,7 +15,7 @@ data:
     <head>
       <title>Status</title>
     </head>
-    <body style="background-color: red; display:flex; justify-content:center; align-items:center; height:100vh;">
+    <body style="background-color: #FF00FF; display:flex; justify-content:center; align-items:center; height:100vh;">
       <h1>Ingress-Successful</h1>
     </body>
     </html>
@@ -32,7 +32,7 @@ data:
     <head>
       <title>Status</title>
     </head>
-    <body style="background-color: #FF00FF; display:flex; justify-content:center; align-items:center; height:100vh;">
+    <body style="background-color: #red; display:flex; justify-content:center; align-items:center; height:100vh;">
       <h1>Successful</h1>
     </body>
     </html>
@@ -84,7 +84,7 @@ spec:
       - name: nginx
         image: nginx:alpine
         ports:
-        - containerPort: 80
+        - containerPort: 81
         volumeMounts:
         - name: html-volume
           mountPath: /usr/share/nginx/html
@@ -116,5 +116,5 @@ spec:
     app: portfoliob-site
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 80
+      port: 81
+      targetPort: 81
