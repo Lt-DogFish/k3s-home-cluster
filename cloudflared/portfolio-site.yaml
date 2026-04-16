@@ -23,7 +23,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: portfolio2-html
+  name: portfoliob-html
   namespace: rajvijeyaram
 data:
   index.html: |
@@ -68,17 +68,17 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: portfolio2-site
+  name: portfoliob-site
   namespace: rajvijeyaram
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: portfolio2-site
+      app: portfoliob-site
   template:
     metadata:
       labels:
-        app: portfolio2-site
+        app: portfoliob-site
     spec:
       containers:
       - name: nginx
@@ -91,7 +91,7 @@ spec:
       volumes:
       - name: html-volume
         configMap:
-          name: portfolio2-html
+          name: portfoliob-html
 ---
 apiVersion: v1
 kind: Service
@@ -109,11 +109,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: portfolio2-service
+  name: portfoliob-service
   namespace: rajvijeyaram
 spec:
   selector:
-    app: portfolio2-site
+    app: portfoliob-site
   ports:
     - protocol: TCP
       port: 80
