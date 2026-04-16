@@ -15,7 +15,7 @@ data:
     <head>
       <title>Status</title>
     </head>
-    <body style="background-color: #FF00FF; display:flex; justify-content:center; align-items:center; height:100vh;">
+    <body style="background-color: red; display:flex; justify-content:center; align-items:center; height:100vh;">
       <h1>Ingress-Successful</h1>
     </body>
     </html>
@@ -32,7 +32,7 @@ data:
     <head>
       <title>Status</title>
     </head>
-    <body style="background-color: green; display:flex; justify-content:center; align-items:center; height:100vh;">
+    <body style="background-color: #FF00FF; display:flex; justify-content:center; align-items:center; height:100vh;">
       <h1>Successful</h1>
     </body>
     </html>
