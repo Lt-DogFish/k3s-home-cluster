@@ -17,6 +17,16 @@ spec:
             name: portfolio-service
             port:
               number: 80
+  - host: portfolio2.rajvijeyaram.site
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: portfolio2-service
+            port:
+              number: 80
   - host: forgejo.rajvijeyaram.site
     http:
       paths:
