@@ -26,7 +26,7 @@ spec:
           service:
             name: portfoliob-service
             port:
-              number: 81
+              number: 80
   - host: forgejo.rajvijeyaram.site
     http:
       paths:

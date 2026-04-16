@@ -84,7 +84,7 @@ spec:
       - name: nginx
         image: nginx:alpine
         ports:
-        - containerPort: 81
+        - containerPort: 80
         volumeMounts:
         - name: html-volume
           mountPath: /usr/share/nginx/html
@@ -116,5 +116,5 @@ spec:
     app: portfoliob-site
   ports:
     - protocol: TCP
-      port: 81
-      targetPort: 81
+      port: 80
+      targetPort: 80
