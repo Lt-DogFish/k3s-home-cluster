@@ -7,17 +7,6 @@ metadata:
     traefik.ingress.kubernetes.io/router.entrypoints: web
 spec:
   rules:
-  - host: portfolio.rajvijeyaram.site
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: portfolio-service
-            port:
-              number: 80
-
   - host: portfoliob.rajvijeyaram.site
     http:
       paths:
@@ -26,6 +15,17 @@ spec:
         backend:
           service:
             name: portfoliob-service
+            port:
+              number: 80
+
+  - host: portfolio.rajvijeyaram.site
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: portfolio-service
             port:
               number: 80
 
